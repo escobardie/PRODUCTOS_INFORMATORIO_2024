@@ -7,6 +7,7 @@
 #     • Manejar errores con bloques try-except para validar entradas y gestionar excepciones.
 #     • Persistir los datos en archivo JSON.
 import json
+import os
 
 class Producto:
     def __init__(self, codigo, nombre, precio,  stock, proveedor):
@@ -122,8 +123,18 @@ class ProductoElectronico(Producto):
 
 
 class CRUDProductos:
-    def __init__(self, archivo):
-        self.archivo = archivo
+    # # Especifica la ubicación y el nombre del archivo donde se guardará el JSON
+    # directorio = os.getcwd()  # Obtiene el directorio actual
+    # nombre_archivo = 'productos.json'
+    # ruta_completa = os.path.join(directorio, nombre_archivo)
+
+    def __init__(self):
+        # Especifica la ubicación y el nombre del archivo donde se guardará el JSON
+        directorio = os.getcwd()  # Obtiene el directorio actual
+        nombre_archivo = 'productos.json'
+        ruta_completa = os.path.join(directorio, nombre_archivo)
+        ## self.archivo = archivo #ORIGINAL
+        self.archivo = ruta_completa
     
     def leer_datos(self):
         try:

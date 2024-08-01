@@ -124,8 +124,9 @@ def mostrar_todos_los_productos(control_productos):
 
 
 if __name__ == "__main__":
-    json_productos = 'productos_db.json'
-    control_productos = CRUDProductos(json_productos)
+    # json_productos = 'productos_db.json'
+    # control_productos = CRUDProductos(json_productos)
+    control_productos = CRUDProductos()
 
     while True:
         opcion = menu_ppal()
