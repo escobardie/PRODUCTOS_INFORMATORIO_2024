@@ -4,9 +4,51 @@
             "codigo": "1",
             "nombre": "1",
             "precio": 1.0,
-            "stock": 1,
+            "stock": 2,
             "proveedor": "1",
             "meses_garantia": "1"
+        },
+        "2": {
+            "codigo": "2",
+            "nombre": "2",
+            "precio": 2.0,
+            "stock": 2,
+            "proveedor": "2",
+            "meses_garantia": "2"
+        },
+        "3": {
+            "codigo": "3",
+            "nombre": "3",
+            "precio": 3.0,
+            "stock": 3,
+            "proveedor": "3",
+            "meses_garantia": "3"
+        }
+    },
+    "productoAlimenticio": {
+        "1": {
+            "codigo": "1",
+            "nombre": "1",
+            "precio": 1.0,
+            "stock": 1,
+            "proveedor": "1",
+            "fecha_vencimiento": "1"
+        },
+        "2": {
+            "codigo": "2",
+            "nombre": "2",
+            "precio": 2.0,
+            "stock": 2,
+            "proveedor": "2",
+            "fecha_vencimiento": "2"
+        },
+        "3": {
+            "codigo": "3",
+            "nombre": "3",
+            "precio": 3.0,
+            "stock": 3,
+            "proveedor": "3",
+            "fecha_vencimiento": "3"
         }
     }
 }

@@ -157,108 +157,141 @@ class CRUDProductos:
         except Exception as error: #TODO  HAY QUE SER MAS CLAROS CON LOS TIPOS DE ERRORES
             print(f'Error inesperado: {error}')
 
-    def crear_producto(self, producto, tipo_producto): ## SE ENVIARA EL TIPO DE PRODUCTO YA SELECCIONADO EN EL MENU MAIN
+    def crear_producto(self, producto, categoria): ## SE ENVIARA EL TIPO DE PRODUCTO YA SELECCIONADO EN EL MENU MAIN
         try:
             datos = self.leer_datos()
             codigo = producto.codigo
+            if categoria not in datos: # si categoria no esta en data entonces hacemos..
+                datos[categoria] = {} # cargamos la categoria en data
 
-            if tipo_producto == '1':
-                if 'productoElectronico' not in datos:
-                    datos['productoElectronico'] = {}
-                if str(codigo) not in datos['productoElectronico']:
-                    datos['productoElectronico'][codigo] = producto.to_dict()
+            if categoria in datos:
+                if str(codigo) not in datos[categoria]: # si el codigo no esta en su categoria hacemos...
+                    datos[categoria][codigo] = producto.to_dict()
                     self.guardar_datos(datos)
-                    print(f"Producto ELECTRONICO {codigo} creado correctamente.") #TODO aca ver como mostrar en __str__
-                else:
-                    print(f"Ya existe producto con CODIGO: '{codigo}'.")
-
-            elif tipo_producto == '2':
-                if 'productoAlimenticio' not in datos:
-                    datos['productoAlimenticio'] = {}
-                if str(codigo) not in datos['productoAlimenticio']:
-                    datos['productoAlimenticio'][codigo] = producto.to_dict()
-                    self.guardar_datos(datos)
-                    print(f"Producto ALIMENTICIO {codigo} creado correctamente.") #TODO aca ver como mostrar en __str__
+                    print(f"Producto: {categoria} con codigo: {codigo} fue creado correctamente.") #TODO aca ver como mostrar en __str__
                 else:
                     print(f"Ya existe producto con CODIGO: '{codigo}'.")
             else:
-                    print("Erro entro por aca")                      
+                print("Erro entro por aca")   
+            # if categoria == '1':
+            #     if 'productoElectronico' not in datos:
+            #         datos['productoElectronico'] = {}
+            #     if str(codigo) not in datos['productoElectronico']:
+            #         datos['productoElectronico'][codigo] = producto.to_dict()
+            #         self.guardar_datos(datos)
+            #         print(f"Producto ELECTRONICO {codigo} creado correctamente.") #TODO aca ver como mostrar en __str__
+            #     else:
+            #         print(f"Ya existe producto con CODIGO: '{codigo}'.")
+
+            # elif categoria == '2':
+            #     if 'productoAlimenticio' not in datos:
+            #         datos['productoAlimenticio'] = {}
+            #     if str(codigo) not in datos['productoAlimenticio']:
+            #         datos['productoAlimenticio'][codigo] = producto.to_dict()
+            #         self.guardar_datos(datos)
+            #         print(f"Producto ALIMENTICIO {codigo} creado correctamente.") #TODO aca ver como mostrar en __str__
+            #     else:
+            #         print(f"Ya existe producto con CODIGO: '{codigo}'.")
+            # else:
+            #         print("Erro entro por aca")                      
 
         except Exception as error: #TODO HAY QUE SER MAS CLAROS CON LOS TIPOS DE ERRORES
             print(f'Error inesperado: {error}')
 
-    def leer_producto(self, codigo, tipo_producto):
+    def leer_producto(self, codigo, categoria):
         try:
             datos = self.leer_datos()
-            if tipo_producto == '1':
-                if codigo in datos['productoElectronico']:
-                    print(f'Se encontró PRODUCTO con CODIGO {codigo}')
-                    for key, value in datos['productoElectronico'][codigo].items():
-                        print(f"    {key}: {value}")
-                else:
-                    print(f'No se encontró PRODUCTO con CODIGO {codigo}')
+            if codigo in datos[categoria]:
+                print(f'Se encontró PRODUCTO con CODIGO {codigo}')
+                for key, value in datos[categoria][codigo].items():
+                    print(f"    {key}: {value}")
             else:
-                if codigo in datos['productoAlimenticio']:
-                    print(f'Se encontró PRODUCTO con CODIGO {codigo}')
-                    for key, value in datos['productoAlimenticio'][codigo].items():
-                        print(f"    {key}: {value}")
-                else:
-                    print(f'No se encontró PRODUCTO con CODIGO {codigo}')
+                print(f'No se encontró PRODUCTO con CODIGO {codigo}')
+            # if categoria == '1':
+            #     if codigo in datos['productoElectronico']:
+            #         print(f'Se encontró PRODUCTO con CODIGO {codigo}')
+            #         for key, value in datos['productoElectronico'][codigo].items():
+            #             print(f"    {key}: {value}")
+            #     else:
+            #         print(f'No se encontró PRODUCTO con CODIGO {codigo}')
+            # else:
+            #     if codigo in datos['productoAlimenticio']:
+            #         print(f'Se encontró PRODUCTO con CODIGO {codigo}')
+            #         for key, value in datos['productoAlimenticio'][codigo].items():
+            #             print(f"    {key}: {value}")
+            #     else:
+            #         print(f'No se encontró PRODUCTO con CODIGO {codigo}')
 
         except Exception as error: #TODO HAY QUE SER MAS CLAROS CON LOS TIPOS DE ERRORES
             print(f'Error inesperado: {error}')
 
-    def actualizar_producto(self, codigo, tipo_producto):
+    def actualizar_producto(self, codigo, categoria):
         try:
             datos = self.leer_datos()
             
-            if tipo_producto == '1':
-                if codigo in datos['productoElectronico']:
-                    print(f'Se encontró PRODUCTO con CODIGO {codigo}')
-                    nuevo_ingreso = int(input('Ingrese cantidad del ingreso: '))
-                    datos['productoElectronico'][codigo]['stock'] += nuevo_ingreso
-                    #input('Presione enter para continuar...')
-                    self.guardar_datos(datos)
+            if codigo in datos[categoria]:
+                print(f'Se encontró PRODUCTO con CODIGO {codigo}')
+                nuevo_ingreso = int(input('Ingrese cantidad del ingreso: '))
+                datos[categoria][codigo]['stock'] += nuevo_ingreso
+                # input('Presione enter para continuar...')
+                self.guardar_datos(datos)
+            else:
+                print(f'No se encontró PRODUCTO con CODIGO {codigo}')
+            # if categoria == '1':
+            #     if codigo in datos['productoElectronico']:
+            #         print(f'Se encontró PRODUCTO con CODIGO {codigo}')
+            #         nuevo_ingreso = int(input('Ingrese cantidad del ingreso: '))
+            #         datos['productoElectronico'][codigo]['stock'] += nuevo_ingreso
+            #         #input('Presione enter para continuar...')
+            #         self.guardar_datos(datos)
                     
-                else:
-                    print(f'No se encontró PRODUCTO con CODIGO {codigo}')
+            #     else:
+            #         print(f'No se encontró PRODUCTO con CODIGO {codigo}')
 
-            else:
-                if codigo in datos['productoAlimenticio']:
-                    print(f'Se encontró PRODUCTO con CODIGO {codigo}')
-                    nuevo_ingreso = int(input('Ingrese cantidad del ingreso: '))
-                    datos['productoAlimenticio'][codigo]['stock'] += nuevo_ingreso
-                    #input('Presione enter para continuar...')
-                    self.guardar_datos(datos)
+            # else:
+            #     if codigo in datos['productoAlimenticio']:
+            #         print(f'Se encontró PRODUCTO con CODIGO {codigo}')
+            #         nuevo_ingreso = int(input('Ingrese cantidad del ingreso: '))
+            #         datos['productoAlimenticio'][codigo]['stock'] += nuevo_ingreso
+            #         #input('Presione enter para continuar...')
+            #         self.guardar_datos(datos)
 
-                else:
-                    print(f'No se encontró PRODUCTO con CODIGO {codigo}')
+            #     else:
+            #         print(f'No se encontró PRODUCTO con CODIGO {codigo}')
 
         except Exception as error: #TODO HAY QUE SER MAS CLAROS CON LOS TIPOS DE ERRORES
             print(f'Error inesperado: {error}')
 
-    def eliminar_producto(self, codigo, tipo_producto):
+    def eliminar_producto(self, codigo, categoria):
         try:
             datos = self.leer_datos()
             
-            if tipo_producto == '1':
-                if codigo in datos['productoElectronico']:
-                    print(f'Se encontró PRODUCTO con CODIGO {codigo}')
-                    del datos['productoElectronico'][codigo]
-                    input('Presione enter para ELIMINAR...')
-                    self.guardar_datos(datos)
-                    print(f'Producto CODIGO:{codigo} eliminado correctamente')
-                else:
-                    print(f'No se encontró PRODUCTO con CODIGO {codigo}')
+            if codigo in datos[categoria]:
+                print(f'Se encontró PRODUCTO con CODIGO {codigo}')
+                del datos[categoria][codigo]
+                input('Presione enter para ELIMINAR...')
+                self.guardar_datos(datos)
+                print(f'Producto CODIGO:{codigo} eliminado correctamente')
             else:
-                if codigo in datos['productoAlimenticio']:
-                    print(f'Se encontró PRODUCTO con CODIGO {codigo}')
-                    del datos['productoAlimenticio'][codigo]
-                    input('Presione enter para ELIMINAR...')
-                    self.guardar_datos(datos)
-                    print(f'Producto CODIGO:{codigo} eliminado correctamente')
-                else:
-                    print(f'No se encontró PRODUCTO con CODIGO {codigo}')
+                print(f'No se encontró PRODUCTO con CODIGO {codigo}')
+            # if categoria == '1':
+            #     if codigo in datos['productoElectronico']:
+            #         print(f'Se encontró PRODUCTO con CODIGO {codigo}')
+            #         del datos['productoElectronico'][codigo]
+            #         input('Presione enter para ELIMINAR...')
+            #         self.guardar_datos(datos)
+            #         print(f'Producto CODIGO:{codigo} eliminado correctamente')
+            #     else:
+            #         print(f'No se encontró PRODUCTO con CODIGO {codigo}')
+            # else:
+            #     if codigo in datos['productoAlimenticio']:
+            #         print(f'Se encontró PRODUCTO con CODIGO {codigo}')
+            #         del datos['productoAlimenticio'][codigo]
+            #         input('Presione enter para ELIMINAR...')
+            #         self.guardar_datos(datos)
+            #         print(f'Producto CODIGO:{codigo} eliminado correctamente')
+            #     else:
+            #         print(f'No se encontró PRODUCTO con CODIGO {codigo}')
 
         except Exception as error: #TODO HAY QUE SER MAS CLAROS CON LOS TIPOS DE ERRORES
             print(f'Error inesperado: {error}')

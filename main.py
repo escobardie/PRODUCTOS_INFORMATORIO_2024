@@ -1,30 +1,31 @@
-from os import name, system
+#from os import name, system
+import os
 import platform
 from time import sleep
 from Sistema_Gestio_Producto import ProductoAlimento, ProductoElectronico, CRUDProductos
 
 ###################### LIMPIA PANTALLA ######################
 # Para Unix/Linux/MacOS/BSD
-if name == "posix":
-    limpiar = "clear"
-# Para DOS/Windows
-elif name == "ce" or name == "nt" or name == "dos":
-    limpiar = "cls"
+# if name == "posix":
+#     limpiar = "clear"
+# # Para DOS/Windows
+# elif name == "ce" or name == "nt" or name == "dos":
+#     limpiar = "cls"
 
 
-# def limpiar_pantalla():
-#     ''' Limpiar la pantalla según el sistema operativo'''
-#     if platform.system() == 'Windows':
-#         os.system('cls')
-#     else:
-#         os.system('clear') # Para Linux/Unix/MacOs
+def limpiar_pantalla():
+    ''' Limpiar la pantalla según el sistema operativo'''
+    if platform.system() == 'Windows':
+        os.system('cls')
+    else:
+        os.system('clear') # Para Linux/Unix/MacOs
 
 ################## ESPERA Y LIMPIEZA #######################
 
-def sleep_and_clear():
-    """ GENERAMOS UN TIEMPO DE ESPERA Y PUEGO EJECUTAMOS UNA LIMPIEZA DE PANTALLA"""
-    sleep(2)
-    system(limpiar)
+# def sleep_and_clear():
+#     """ GENERAMOS UN TIEMPO DE ESPERA Y PUEGO EJECUTAMOS UNA LIMPIEZA DE PANTALLA"""
+#     sleep(2)
+#     system(limpiar)
 
 # time.sleep(3) tiempo de esperta antes de la siguiente ejecucion
 # os.system(limpiar) limpia la pantalla
@@ -32,6 +33,7 @@ def sleep_and_clear():
 
 
 def menu_ppal():
+    limpiar_pantalla()
     menu = input('''
         *******************************************
         *       Sistema Analisis de Datos         *
@@ -46,11 +48,17 @@ def menu_ppal():
         *                                         *
         *******************************************
     Ingrese una opción: ''')
+    # limpiar_pantalla()
     return menu
 
 
 def menu_tipo_producto():
-    opciones = ['1','2','3']
+    limpiar_pantalla()
+    #opciones = ['1','2','3'] #ORIGINAL
+    opciones = {
+        '1': 'productoElectronico',
+        '2': 'productoAlimenticio'
+        }
     while True:
         menu = input('''
             *******************************************
@@ -64,49 +72,54 @@ def menu_tipo_producto():
             *******************************************
         Ingrese una opción: ''')
         if str(menu) in opciones:
-            return menu
+            #return menu.values()
+            limpiar_pantalla()
+            return opciones[menu]
+        elif menu == '3': #TODO HAY QUE MEJORAR EL SALIR
+            limpiar_pantalla()
+            menu_ppal()
         else:
-            print('Opción no válida. Por favor, seleccione una opción válida (1-3)')
+            print('Opción no válida. Por favor, seleccione una opción válida')
             
 
-def agregar_producto(control_productos, tipo_de_producto):
+def agregar_producto(control_productos, categoria):
     try:
-        #tipo_de_producto = menu_tipo_producto()
+        #categoria = menu_tipo_producto()
         codigo = input('Ingrese CODIG: ')
         nombre = input('Ingrese NOMBRE: ')
         precio = float(input('Ingrese PRECIO: '))
         stock = int(input('Ingrese Cantidad de STOCK: ') )
         proveedor = input('Ingrese PROVEEDOR: ')
         
-        if tipo_de_producto == '1':
+        if categoria == 'productoElectronico':
             meses_garantia = input('Ingrese Meses de Garantia: ')
             producto = ProductoElectronico(codigo, nombre, precio,  stock, proveedor, meses_garantia)
-        elif tipo_de_producto == '2':
+        elif categoria == 'productoAlimenticio':
             fecha_vencimiento = input('Ingrese Fecha de Vencimiento DD/MM/AAAA: ')
             producto = ProductoAlimento(codigo, nombre, precio,  stock, proveedor, fecha_vencimiento)
         else:
             print("OCURRIO UN ERROR !ENTRO POR ACA!.")
 
-        control_productos.crear_producto(producto, tipo_de_producto)
+        control_productos.crear_producto(producto, categoria)
         input('ENTER para continuar...')
-        sleep_and_clear()
+       
 
     except Exception as error: #TODO HAY QUE SER MAS CLAROS CON LOS TIPOS DE ERRORES
             print(f'Error inesperado: {error}')
 
-def buscar_producto_por_codigo(control_productos, tipo_de_producto):
+def buscar_producto_por_codigo(control_productos, categoria):
     codigo = input('Ingrese el CODIGO del PRODUCTO: ')
-    control_productos.leer_producto(codigo, tipo_de_producto)
+    control_productos.leer_producto(codigo, categoria)
     input('Presione enter para continuar...')
 
-def actualizar_stock(control_productos, tipo_de_producto):
+def actualizar_stock(control_productos, categoria):
     codigo = input('Ingrese el CODIGO del PRODUCTO: ')
-    control_productos.actualizar_producto(codigo, tipo_de_producto)
+    control_productos.actualizar_producto(codigo, categoria)
     input('Presione enter para continuar...')
 
-def eliminar_producto_por_codigo(control_productos,tipo_de_producto):
+def eliminar_producto_por_codigo(control_productos,categoria):
     codigo = input('Ingrese el CODIGO del PRODUCTO: ')
-    control_productos.eliminar_producto(codigo, tipo_de_producto)
+    control_productos.eliminar_producto(codigo, categoria)
     input('Presione enter para continuar...')
 
 def mostrar_todos_los_productos(control_productos):
@@ -153,10 +166,10 @@ if __name__ == "__main__":
             print('Saliendo del programa...')
             break
         
-        else:
+        else: # NO VALIDO
             system(limpiar)
             print('Opción no válida. Por favor, seleccione una opción válida (1-7)')
-            sleep_and_clear()
+            
         
 
 
