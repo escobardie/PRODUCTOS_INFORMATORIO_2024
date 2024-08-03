@@ -23,6 +23,14 @@
             "stock": 3,
             "proveedor": "3",
             "meses_garantia": "3"
+        },
+        "55": {
+            "codigo": "55",
+            "nombre": "55",
+            "precio": 55.0,
+            "stock": 55,
+            "proveedor": "55",
+            "meses_garantia": "55"
         }
     },
     "productoAlimenticio": {

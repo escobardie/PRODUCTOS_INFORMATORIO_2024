@@ -8,6 +8,7 @@
 #     • Persistir los datos en archivo JSON.
 import json
 import os
+import inspect
 
 class Producto:
     def __init__(self, codigo, nombre, precio,  stock, proveedor):
@@ -68,6 +69,10 @@ class Producto:
             "stock" : self.stock,
             "proveedor" : self.proveedor
         }
+
+
+    def obtener_atributos(clase):
+        return [param for param in inspect.signature(clase.__init__).parameters if param != 'self']
 
     def __str__(self):
         '''RETORNAMOS CODIGO Y NOMBRE'''
@@ -140,63 +145,98 @@ class CRUDProductos:
         try:
             with open(self.archivo, 'r') as file:
                 datos = json.load(file)
-        except FileNotFoundError:
-            return {}
+
+        except FileNotFoundError: # Maneja el caso cuando el archivo no se encuentra.
+            print(f'El archivo {self.archivo} no se encontró.')
+
+        except TypeError as type_error: # Maneja errores de tipo que pueden ocurrir al intentar serializar los datos en JSON.
+            print(f'Error de tipo al intentar guardar los datos: {type_error}')
+
+        except json.JSONDecodeError as json_error: # Esto captura específicamente errores al decodificar JSON.
+            raise ValueError(f'Error al decodificar el JSON: {json_error}') 
+
+        except IOError as io_error: # Esto captura errores de entrada/salida que pueden ocurrir durante la lectura del archivo.
+            raise IOError(f'Error de E/S al leer el archivo: {io_error}') 
+
         except Exception as error:
-            raise Exception(f'Error al leer datos del archivo: {error}')
+            raise Exception(f'Error inesperado al leer datos del archivo: {error}')
+
         else:
             return datos
+
+        # except FileNotFoundError:
+        #     return {}
+        # except Exception as error:
+        #     raise Exception(f'Error al leer datos del archivo: {error}')
+        # else:
+        #     return datos
 
     def guardar_datos(self, datos):
         try:
             with open(self.archivo, 'w') as file:
                 json.dump(datos, file, indent=4)
 
-        except IOError as error:
-            print(f'Error al intentar guardar los datos en {self.archivo}: {error}')
-        except Exception as error: #TODO  HAY QUE SER MAS CLAROS CON LOS TIPOS DE ERRORES
+        except FileNotFoundError: # Maneja el caso cuando el archivo no se encuentra.
+            print(f'El archivo {self.archivo} no se encontró.')
+
+        except PermissionError: # Maneja los casos donde no se tienen los permisos necesarios para escribir en el archivo.
+            print(f'Permiso denegado para escribir en el archivo {self.archivo}.')
+
+        except TypeError as type_error: # Maneja errores de tipo que pueden ocurrir al intentar serializar los datos en JSON.
+            print(f'Error de tipo al intentar guardar los datos: {type_error}')
+
+        except IOError as io_error: # Esto captura errores de entrada/salida que pueden ocurrir durante la lectura del archivo.
+            print(f'Error de E/S al intentar guardar los datos en {self.archivo}: {io_error}')
+
+        except Exception as error:
             print(f'Error inesperado: {error}')
+
+        else:
+            print(f'Datos guardados exitosamente en {self.archivo}')
+
+        # except IOError as error:
+        #     print(f'Error al intentar guardar los datos en {self.archivo}: {error}')
+        # except Exception as error: #TODO  HAY QUE SER MAS CLAROS CON LOS TIPOS DE ERRORES
+        #     print(f'Error inesperado: {error}')
 
     def crear_producto(self, producto, categoria): ## SE ENVIARA EL TIPO DE PRODUCTO YA SELECCIONADO EN EL MENU MAIN
         try:
             datos = self.leer_datos()
             codigo = producto.codigo
+
             if categoria not in datos: # si categoria no esta en data entonces hacemos..
                 datos[categoria] = {} # cargamos la categoria en data
 
             if categoria in datos:
+
                 if str(codigo) not in datos[categoria]: # si el codigo no esta en su categoria hacemos...
                     datos[categoria][codigo] = producto.to_dict()
                     self.guardar_datos(datos)
                     print(f"Producto: {categoria} con codigo: {codigo} fue creado correctamente.") #TODO aca ver como mostrar en __str__
+
                 else:
                     print(f"Ya existe producto con CODIGO: '{codigo}'.")
+
             else:
-                print("Erro entro por aca")   
-            # if categoria == '1':
-            #     if 'productoElectronico' not in datos:
-            #         datos['productoElectronico'] = {}
-            #     if str(codigo) not in datos['productoElectronico']:
-            #         datos['productoElectronico'][codigo] = producto.to_dict()
-            #         self.guardar_datos(datos)
-            #         print(f"Producto ELECTRONICO {codigo} creado correctamente.") #TODO aca ver como mostrar en __str__
-            #     else:
-            #         print(f"Ya existe producto con CODIGO: '{codigo}'.")
+                print("Erro entro por aca")                  
+        
+        except FileNotFoundError: # Maneja el caso cuando el archivo no se encuentra.
+            print(f'El archivo {self.archivo} no se encontró.')
 
-            # elif categoria == '2':
-            #     if 'productoAlimenticio' not in datos:
-            #         datos['productoAlimenticio'] = {}
-            #     if str(codigo) not in datos['productoAlimenticio']:
-            #         datos['productoAlimenticio'][codigo] = producto.to_dict()
-            #         self.guardar_datos(datos)
-            #         print(f"Producto ALIMENTICIO {codigo} creado correctamente.") #TODO aca ver como mostrar en __str__
-            #     else:
-            #         print(f"Ya existe producto con CODIGO: '{codigo}'.")
-            # else:
-            #         print("Erro entro por aca")                      
+        except PermissionError: # Maneja los casos donde no se tienen los permisos necesarios para escribir en el archivo.
+            print(f'Permiso denegado para escribir en el archivo {self.archivo}.')
 
-        except Exception as error: #TODO HAY QUE SER MAS CLAROS CON LOS TIPOS DE ERRORES
+        except json.JSONDecodeError as json_error: # Esto captura específicamente errores al decodificar JSON.
+            print(f'Error al decodificar JSON: {json_error}')
+
+        except KeyError as key_error: # Maneja errores de clave que pueden ocurrir al manipular diccionarios.
+            print(f'Error de clave: {key_error}')
+
+        except Exception as error:
             print(f'Error inesperado: {error}')
+
+        # except Exception as error: #TODO HAY QUE SER MAS CLAROS CON LOS TIPOS DE ERRORES
+        #     print(f'Error inesperado: {error}')
 
     def leer_producto(self, codigo, categoria):
         try:
@@ -207,23 +247,24 @@ class CRUDProductos:
                     print(f"    {key}: {value}")
             else:
                 print(f'No se encontró PRODUCTO con CODIGO {codigo}')
-            # if categoria == '1':
-            #     if codigo in datos['productoElectronico']:
-            #         print(f'Se encontró PRODUCTO con CODIGO {codigo}')
-            #         for key, value in datos['productoElectronico'][codigo].items():
-            #             print(f"    {key}: {value}")
-            #     else:
-            #         print(f'No se encontró PRODUCTO con CODIGO {codigo}')
-            # else:
-            #     if codigo in datos['productoAlimenticio']:
-            #         print(f'Se encontró PRODUCTO con CODIGO {codigo}')
-            #         for key, value in datos['productoAlimenticio'][codigo].items():
-            #             print(f"    {key}: {value}")
-            #     else:
-            #         print(f'No se encontró PRODUCTO con CODIGO {codigo}')
 
-        except Exception as error: #TODO HAY QUE SER MAS CLAROS CON LOS TIPOS DE ERRORES
+        except FileNotFoundError: # Maneja el caso cuando el archivo no se encuentra.
+            print(f'El archivo {self.archivo} no se encontró.')
+
+        except PermissionError: # Maneja los casos donde no se tienen los permisos necesarios para escribir en el archivo.
+            print(f'Permiso denegado para leer el archivo {self.archivo}.')
+
+        except json.JSONDecodeError as json_error: # Esto captura específicamente errores al decodificar JSON.
+            print(f'Error al decodificar JSON: {json_error}')
+
+        except KeyError as key_error: # Maneja errores de clave que pueden ocurrir al manipular diccionarios.
+            print(f'Error de clave: {key_error}')
+
+        except Exception as error:
             print(f'Error inesperado: {error}')
+
+        # except Exception as error: #TODO HAY QUE SER MAS CLAROS CON LOS TIPOS DE ERRORES
+        #     print(f'Error inesperado: {error}')
 
     def actualizar_producto(self, codigo, categoria):
         try:
@@ -237,29 +278,20 @@ class CRUDProductos:
                 self.guardar_datos(datos)
             else:
                 print(f'No se encontró PRODUCTO con CODIGO {codigo}')
-            # if categoria == '1':
-            #     if codigo in datos['productoElectronico']:
-            #         print(f'Se encontró PRODUCTO con CODIGO {codigo}')
-            #         nuevo_ingreso = int(input('Ingrese cantidad del ingreso: '))
-            #         datos['productoElectronico'][codigo]['stock'] += nuevo_ingreso
-            #         #input('Presione enter para continuar...')
-            #         self.guardar_datos(datos)
-                    
-            #     else:
-            #         print(f'No se encontró PRODUCTO con CODIGO {codigo}')
 
-            # else:
-            #     if codigo in datos['productoAlimenticio']:
-            #         print(f'Se encontró PRODUCTO con CODIGO {codigo}')
-            #         nuevo_ingreso = int(input('Ingrese cantidad del ingreso: '))
-            #         datos['productoAlimenticio'][codigo]['stock'] += nuevo_ingreso
-            #         #input('Presione enter para continuar...')
-            #         self.guardar_datos(datos)
+        except FileNotFoundError: # Maneja el caso cuando el archivo no se encuentra.
+            print(f'El archivo {self.archivo} no se encontró.')
 
-            #     else:
-            #         print(f'No se encontró PRODUCTO con CODIGO {codigo}')
+        except PermissionError: # Maneja los casos donde no se tienen los permisos necesarios para escribir en el archivo.
+            print(f'Permiso denegado para leer el archivo {self.archivo}.')
 
-        except Exception as error: #TODO HAY QUE SER MAS CLAROS CON LOS TIPOS DE ERRORES
+        except json.JSONDecodeError as json_error: # Esto captura específicamente errores al decodificar JSON.
+            print(f'Error al decodificar JSON: {json_error}')
+
+        except KeyError as key_error: # Maneja errores de clave que pueden ocurrir al manipular diccionarios.
+            print(f'Error de clave: {key_error}')
+
+        except Exception as error:
             print(f'Error inesperado: {error}')
 
     def eliminar_producto(self, codigo, categoria):
@@ -274,24 +306,18 @@ class CRUDProductos:
                 print(f'Producto CODIGO:{codigo} eliminado correctamente')
             else:
                 print(f'No se encontró PRODUCTO con CODIGO {codigo}')
-            # if categoria == '1':
-            #     if codigo in datos['productoElectronico']:
-            #         print(f'Se encontró PRODUCTO con CODIGO {codigo}')
-            #         del datos['productoElectronico'][codigo]
-            #         input('Presione enter para ELIMINAR...')
-            #         self.guardar_datos(datos)
-            #         print(f'Producto CODIGO:{codigo} eliminado correctamente')
-            #     else:
-            #         print(f'No se encontró PRODUCTO con CODIGO {codigo}')
-            # else:
-            #     if codigo in datos['productoAlimenticio']:
-            #         print(f'Se encontró PRODUCTO con CODIGO {codigo}')
-            #         del datos['productoAlimenticio'][codigo]
-            #         input('Presione enter para ELIMINAR...')
-            #         self.guardar_datos(datos)
-            #         print(f'Producto CODIGO:{codigo} eliminado correctamente')
-            #     else:
-            #         print(f'No se encontró PRODUCTO con CODIGO {codigo}')
 
-        except Exception as error: #TODO HAY QUE SER MAS CLAROS CON LOS TIPOS DE ERRORES
+        except FileNotFoundError: # Maneja el caso cuando el archivo no se encuentra.
+            print(f'El archivo {self.archivo} no se encontró.')
+
+        except PermissionError: # Maneja los casos donde no se tienen los permisos necesarios para escribir en el archivo.
+            print(f'Permiso denegado para leer el archivo {self.archivo}.')
+
+        except json.JSONDecodeError as json_error: # Esto captura específicamente errores al decodificar JSON.
+            print(f'Error al decodificar JSON: {json_error}')
+
+        except KeyError as key_error: # Maneja errores de clave que pueden ocurrir al manipular diccionarios.
+            print(f'Error de clave: {key_error}')
+
+        except Exception as error:
             print(f'Error inesperado: {error}')

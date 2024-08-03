@@ -52,7 +52,7 @@ def menu_ppal():
     return menu
 
 
-def menu_tipo_producto():
+def menu_categoria():
     limpiar_pantalla()
     #opciones = ['1','2','3'] #ORIGINAL
     opciones = {
@@ -84,7 +84,7 @@ def menu_tipo_producto():
 
 def agregar_producto(control_productos, categoria):
     try:
-        #categoria = menu_tipo_producto()
+        
         codigo = input('Ingrese CODIG: ')
         nombre = input('Ingrese NOMBRE: ')
         precio = float(input('Ingrese PRECIO: '))
@@ -144,20 +144,20 @@ if __name__ == "__main__":
     while True:
         opcion = menu_ppal()
         if opcion == '1': # AGREGAR PRODUCTO
-            tipo_producto = menu_tipo_producto()
-            agregar_producto(control_productos, tipo_producto)
+            categoria = menu_categoria()
+            agregar_producto(control_productos, categoria)
 
         elif opcion == "2": # BUSCAR POR CODIGO
-            tipo_producto = menu_tipo_producto()
-            buscar_producto_por_codigo(control_productos, tipo_producto)
+            categoria = menu_categoria()
+            buscar_producto_por_codigo(control_productos, categoria)
             
         elif opcion == "3": # ACTUALIZAR
-            tipo_producto = menu_tipo_producto()
-            actualizar_stock(control_productos, tipo_producto)
+            categoria = menu_categoria()
+            actualizar_stock(control_productos, categoria)
 
         elif opcion == "4": # ELIMINAR PRODUCTO
-            tipo_producto = menu_tipo_producto()
-            eliminar_producto_por_codigo(control_productos,tipo_producto)
+            categoria = menu_categoria()
+            eliminar_producto_por_codigo(control_productos,categoria)
 
         elif opcion == "5": # MOSTRAR TODOS LOS PRODUCTOS
             mostrar_todos_los_productos(control_productos)
